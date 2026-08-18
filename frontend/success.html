@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed! | Pink Pixies</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <!-- Supabase & Notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseConfig.js"></script>
+    <script src="notifications.js"></script>
+    <script>
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = supabaseClient;
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDF2F8;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .glass {
+            background-color: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            box-shadow: 0 4px 24px -2px rgba(190, 24, 93, 0.07), 0 1.5px 6px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .animate-pop {
+            animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div
+        class="glass max-w-md w-full rounded-luxury p-10 text-center shadow-22xl border border-brand-border animate-pop">
+        <div
+            class="w-24 h-24 bg-gradient-to-tr from-brand-pink to-brand-pink-light rounded-luxury flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-brand-pink/20">
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-black text-text-main uppercase tracking-widest mb-6">Payment Secured! ✨</h1>
+        <p class="text-brand-gray/40 text-[10px] font-black uppercase tracking-widest leading-loose mb-10">Your
+            appointment is officially confirmed. We've synchronized your digital itinerary with the professional.</p>
+
+        <div class="space-y-4">
+            <a href="index.html" class="block w-full btn-pink py-5">
+                Return to Gallery
+            </a>
+            <p class="text-[8px] text-brand-gray/20 font-black uppercase tracking-[0.4em]">Transaction Vector: <span
+                    id="payment-id" class="font-mono">#PX-77281</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Premium CSS/JS Confetti Effect
+        function launchConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'fixed w-2 h-2 rounded-luxury pointer-events-none z-[100]';
+                confetti.style.backgroundColor = ['#ec4899', '#fbcfe8', '#f472b6'][Math.floor(Math.random() * 3)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                document.body.appendChild(confetti);
+
+                const duration = 2000 + Math.random() * 3000;
+                const path = confetti.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(110vh) rotate(${Math.random() * 1000}deg)`, opacity: 0 }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0,0,0.2,1)'
+                });
+
+                path.onfinish = () => confetti.remove();
+            }
+        }
+
+        window.onload = async () => {
+            launchConfetti();
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            const appointmentId = urlParams.get('appointment_id');
+
+            if (sessionId) {
+                document.getElementById('payment-id').innerText = sessionId.substring(0, 12) + '...';
+            }
+
+            // Trigger Notifications
+            if (appointmentId && window.Notifications) {
+                try {
+                    // Fetch appointment details to get tech_id and client_id
+                    const { data: appt, error } = await window.supabaseClient
+                        .from('appointments')
+                        .select('*, profiles!technician_id(full_name, whatsapp_number), clients:profiles!client_id(full_name, whatsapp_number)')
+                        .eq('id', appointmentId)
+                        .single();
+
+                    if (!error && appt) {
+                        // 1. Notify Pro
+                        await window.Notifications.sendInAppNotification(
+                            appt.technician_id,
+                            "New Confirmed Booking! 📅",
+                            `${appt.clients.full_name} has just paid for a session.`,
+                            'booking',
+                            '/#portal'
+                        );
+
+                        // 2. Trigger WhatsApp (Mock)
+                        await window.Notifications.triggerWhatsAppBooking({
+                            clientPhone: appt.clients.whatsapp_number,
+                            clientName: appt.clients.full_name,
+                            serviceName: "Your Beauty Session",
+                            proName: appt.profiles.full_name,
+                            dateTime: new Date(appt.start_time).toLocaleString()
+                        });
+                    }
+                } catch (err) {
+                    console.error("Post-payment notification failed:", err);
+                }
+            }
+        };
+    </script>
+</body>
+
+</html>

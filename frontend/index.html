@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pink Pixies | Beauty Professional Marketplace</title>
+    <meta name="description"
+        content="Discover and book the best nail technicians and lash installers, or join our platform to grow your beauty business." />
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+    <!-- Flatpickr CSS for Calendar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="animations.css" />
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#BE185D">
+    <link rel="apple-touch-icon"
+        href="https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?auto=format&fit=crop&w=192&q=80">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-pink': '#EC4899',
+                        'brand-pink-light': '#FDF2F8',
+                        'brand-pink-soft': '#FCE7F3',
+                        'brand-gray': '#9CA3AF',
+                        'brand-border': '#E5E7EB',
+                        'text-main': '#1F2937',
+                        'text-muted': '#6B7280',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Playfair Display', 'serif'],
+                    },
+                    borderRadius: {
+                        'luxury': '12px',
+                        'soft': '24px',
+                    },
+                    backgroundImage: {
+                        'pink-gradient': 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #1F2937;
+            background-color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .beauty-text {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #1F2937;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #EC4899;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .brand-text {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(236, 72, 153, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-dark {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(236, 72, 153, 0.1);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(236, 72, 153, 0.2);
+        }
+
+        .pink-glow {
+            box-shadow: 0 0 40px -10px rgba(236, 72, 153, 0.3);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .pro-card {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: #ffffff;
+            border: 1px solid #F3F4F6;
+        }
+
+        .pro-card:hover {
+            transform: translateY(-8px);
+            border-color: #FCE7F3;
+            box-shadow: 0 20px 40px -15px rgba(236, 72, 153, 0.15);
+        }
+
+        /* Navbar link hover */
+        nav a {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            background: #EC4899;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover {
+            color: #EC4899;
+        }
+
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #FDF2F8;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FBCFE8;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #EC4899;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .intro-logo {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInReveal 1.5s forwards ease-out 0.2s;
+        }
+
+        .intro-subtitle {
+            font-size: 0.8rem;
+            color: #F472B6;
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeInReveal 1.5s forwards ease-out 0.8s;
+        }
+
+        @keyframes fadeInReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <!-- Posthog Analytics -->
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.async = !0, p.src = s.api_host + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "capture identify alias person_set person_set_once prevent_reload_identify group stylesheet reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags identifyAndSetPersonAlias updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures onSessionId".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1.6) }(document, window.posthog || []);
+        posthog.init('phc_mock_key_for_pink_pixies', { api_host: 'https://app.posthog.com' })
+    </script>
+</head>
+
+<body class="bg-white min-h-screen flex flex-col items-center overflow-x-hidden w-full text-text-main">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="intro-logo">Pink Pixies</div>
+        <div class="intro-subtitle">Empowering Beauty</div>
+        <div class="mt-8 w-12 h-[px] bg-white/10 relative overflow-hidden">
+            <div class="absolute inset-0 bg-white animate-[loading_2s_ease-in-out_infinite]"></div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes loading {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+
+    <!-- Navbar (Luxury Topbar) -->
+    <nav
+        class="w-full fixed top-0 z-50 glass px-12 py-6 flex justify-between items-center border-b border-brand-border">
+        <a href="#" class="text-xl font-bold brand-text">Pink Pixies</a>
+        <div class="hidden md:flex gap-10">
+            <a href="#professionals"
+                class="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gray hover:text-brand-pink transition-all">Technicians</a>
+            <a href="#how-it-works"
+                class="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gray hover:text-brand-pink transition-all">Process</a>
+            <a href="#join"
+                class="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gray hover:text-brand-pink transition-all">Join</a>
+        </div>
+        <div id="auth-container" class="flex gap-6 items-center">
+            <button id="admin-entrance-btn"
+                class="hidden text-[10px] font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-1.5 rounded-luxury bg-transparent transition-all hover:bg-white/10">Admin</button>
+            <div id="notif-wrapper" class="relative hidden">
+                <button id="notif-bell-btn"
+                    class="text-brand-pink/[0.4] hover:text-brand-pink transition-colors p-2 mt-[-4px]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                </button>
+                <span id="notif-badge"
+                    class="absolute top-1 right-1 bg-white text-black text-[7px] h-3 w-3 flex items-center justify-center rounded-full hidden font-black">0</span>
+
+                <!-- Dropdown -->
+                <div id="notif-dropdown"
+                    class="absolute right-0 mt-4 w-80 glass rounded-luxury shadow-2xl overflow-hidden hidden z-[150]">
+                    <div class="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
+                        <h3 class="text-[9px] font-bold uppercase tracking-widest text-white/50">Notifications</h3>
+                        <button id="mark-all-read"
+                            class="text-[8px] text-accent-blue font-bold uppercase tracking-widest hover:underline">Clear</button>
+                    </div>
+                    <div id="notif-list" class="max-h-96 overflow-y-auto bg-white/30">
+                        <div
+                            class="p-10 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest italic">
+                            No Vibes Yet ✨</div>
+                    </div>
+                </div>
+            </div>
+            <button id="pro-portal-btn"
+                class="hidden text-[10px] font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-1.5 rounded-luxury bg-transparent transition-all hover:bg-white/10">Portfolio</button>
+            <div id="loyalty-badge"
+                class="hidden flex items-center gap-2 bg-white/5 text-white px-4 py-1.5 rounded-luxury text-[9px] font-bold border border-white/10 shadow-sm transition-all hover:scale-105 cursor-default">
+                <span id="user-points" class="text-white">0</span>
+                <span id="user-tier"
+                    class="ml-2 border border-white/20 text-white/50 px-2 py-0.5 rounded text-[7px] uppercase tracking-widest">Bronze</span>
+            </div>
+            <button id="my-bookings-btn"
+                class="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 hover:text-white transition-colors">Bookings</button>
+            <button id="initial-login-btn"
+                class="hidden md:block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 hover:text-white transition-colors">Login</button>
+            <button id="initial-signup-btn"
+                class="text-brand-pink bg-white px-10 py-3 rounded-luxury hover:bg-brand-pink-soft transition-all shadow-xl shadow-brand-pink/5 text-[10px] font-black uppercase tracking-[0.2em] border border-brand-border">Enter</button>
+        </div>
+    </nav>
+
+    <!-- Admin Dashboard Modal Overlay (Luxury Style) -->
+    <div id="admin-modal"
+        class="fixed inset-0 bg-white/80 backdrop-blur-2xl z-[150] hidden flex items-center justify-center p-4">
+        <div
+            class="glass w-full max-w-5xl rounded-luxury p-12 relative overflow-hidden pink-glow border border-brand-border">
+            <button onclick="document.getElementById('admin-modal').classList.add('hidden')"
+                class="absolute top-10 right-10 text-white/20 hover:text-white transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <div class="section-title mb-2">Platform Control</div>
+            <h2 class="text-6xl font-black beauty-text tracking-tighter mb-12 uppercase">Platform <span
+                    class="text-white/20">Control.</span></h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 mb-16">
+                <div class="bg-brand-pink-light p-12 border-r border-brand-border">
+                    <p class="text-[10px] font-black text-brand-gray uppercase tracking-[0.4em] mb-4">Total Volume</p>
+                    <h3 id="admin-total-volume" class="text-6xl font-black text-text-main tracking-tighter">ZMW 0.00
+                    </h3>
+                </div>
+                <div class="bg-white p-12">
+                    <p class="text-[10px] font-black text-brand-pink uppercase tracking-[0.4em] mb-4">Platform Revenue
+                    </p>
+                    <h3 id="admin-platform-revenue" class="text-6xl font-black text-text-main tracking-tighter">ZMW 0.00
+                    </h3>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-1 h-8 bg-brand-pink"></div>
+                <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-brand-gray">Credential Validation
+                    Pipeline
+                </h3>
+            </div>
+            <div id="pending-verifications-list" class="space-y-4 max-h-[35vh] overflow-y-auto pr-4 custom-scrollbar">
+                <p class="text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest py-10 italic">
+                    Synchronizing Data Assets...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal"
+        class="fixed inset-0 bg-white/95 backdrop-blur-3xl z-[150] hidden flex items-center justify-center p-8 transition-all duration-1000">
+        <div
+            class="glass w-full max-w-xl rounded-luxury border border-brand-border shadow-2xl relative overflow-hidden p-20">
+            <div class="absolute inset-0 bg-blue-glow opacity-5 pointer-events-none"></div>
+
+            <button id="close-auth" class="absolute top-12 right-12 text-white/20 hover:text-white transition-all">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="mb-16 text-center">
+                <div class="section-title mb-6">Security Protocol</div>
+                <h2 id="auth-title" class="text-5xl font-black text-brand-pink uppercase tracking-tighter leading-none">
+                    User <span class="text-brand-pink/20">Access.</span></h2>
+            </div>
+
+            <form id="auth-form" class="space-y-10">
+                <div id="role-selection"
+                    class="flex gap-px bg-brand-pink-soft p-px mb-12 border border-brand-border rounded-luxury overflow-hidden">
+                    <button type="button" data-role="client"
+                        class="flex-1 py-4 text-[10px] font-black uppercase tracking-widest bg-brand-pink text-white transition-all">Principal</button>
+                    <button type="button" data-role="technician"
+                        class="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-brand-pink/40 hover:bg-white/5 transition-all">Architect</button>
+                    <input type="hidden" id="user-role" value="client">
+                </div>
+
+                <div id="name-field" class="p-8 bg-white border border-brand-border rounded-luxury">
+                    <label class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Architect
+                        Name</label>
+                    <input type="text" id="full-name"
+                        class="w-full bg-transparent text-text-main focus:outline-none text-[12px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                        placeholder="ENTITY NAME...">
+                </div>
+
+                <div class="p-8 bg-white border border-brand-border rounded-luxury">
+                    <label class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Uplink
+                        Address</label>
+                    <input type="email" id="email" required
+                        class="w-full bg-transparent text-text-main focus:outline-none text-[12px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                        placeholder="EMAIL@PROTOCOL.IO">
+                </div>
+
+                <div class="p-8 bg-white border border-brand-border rounded-luxury">
+                    <label class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Access
+                        Cipher</label>
+                    <input type="password" id="password" required
+                        class="w-full bg-transparent text-text-main focus:outline-none text-[12px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                        placeholder="••••••••">
+                </div>
+
+                <button type="submit" id="auth-submit-btn"
+                    class="w-full bg-brand-pink text-white font-black py-8 rounded-luxury hover:bg-brand-pink/90 transition-all shadow-2xl text-[10px] uppercase tracking-[0.5em] mt-6">
+                    Connect
+                </button>
+            </form>
+
+            <div class="mt-12 text-center">
+                <button id="auth-toggle-btn"
+                    class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em] hover:text-white transition-all underline underline-offset-4 decoration-white/10">
+                    <span id="auth-toggle-text">Account Detected?</span> Authenticate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-modal"
+        class="fixed inset-0 bg-white/80 backdrop-blur-2xl z-[100] hidden flex-col items-center justify-end sm:justify-center p-0 sm:p-4 transition-all">
+        <div
+            class="glass w-full h-[85vh] sm:h-[80vh] sm:max-w-3xl sm:rounded-luxury rounded-t-luxury flex flex-col relative overflow-hidden border border-brand-border shadow-2xl">
+
+            <!-- Chat Header -->
+            <div class="bg-white/5 border-b border-white/5 p-6 flex justify-between items-center z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-luxury p-px bg-white/10 overflow-hidden">
+                        <img id="chat-pro-avatar"
+                            src="https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&q=80"
+                            alt="Avatar" class="w-full h-full object-cover grayscale brightness-125">
+                    </div>
+                    <div>
+                        <h3 id="chat-pro-name"
+                            class="text-xs font-black luxury-text tracking-[0.2em] text-white uppercase">
+                            Technician Profile</h3>
+                        <p id="chat-pro-status"
+                            class="text-[8px] font-black uppercase tracking-[0.3em] text-white/30 flex items-center gap-2 mt-1">
+                            <span class="w-1 h-3 bg-accent-blue inline-block"></span> Uplink Secure
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button id="close-chat"
+                        class="text-white/20 hover:text-white transition-all bg-white/5 rounded-luxury p-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Tabs -->
+            <div class="flex border-b border-brand-border bg-brand-pink-light">
+                <button id="tab-chat"
+                    class="flex-1 py-5 text-[9px] font-black uppercase tracking-[0.3em] text-brand-pink border-b-2 border-brand-pink transition-all">Messenger</button>
+                <button id="tab-book"
+                    class="flex-1 py-5 text-[9px] font-black uppercase tracking-[0.3em] text-brand-gray hover:text-brand-pink border-b-2 border-transparent transition-all">Scheduling</button>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-12 space-y-10 bg-white block custom-scrollbar">
+                <div class="flex justify-center">
+                    <div
+                        class="text-[8px] font-black uppercase tracking-[0.4em] text-brand-gray px-6 py-2 border border-brand-border rounded-luxury">
+                        Protocol Initialized
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div id="chat-input-area" class="bg-white/80 backdrop-blur-2xl border-t border-brand-border p-8 z-10 block">
+                <form id="chat-form"
+                    class="flex gap-px bg-brand-pink-soft p-px border border-brand-border rounded-luxury">
+                    <input type="text" id="chat-input"
+                        class="flex-1 px-8 py-5 bg-transparent text-text-main focus:outline-none text-[10px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                        placeholder="ENTER TRANSMISSION..." autocomplete="off">
+                    <button type="submit"
+                        class="bg-brand-pink text-white px-12 py-5 flex items-center justify-center shrink-0 hover:bg-brand-pink/90 transition-all shadow-2xl text-[8px] font-black uppercase tracking-widest">
+                        Transit
+                    </button>
+                </form>
+            </div>
+
+            <!-- Booking Area -->
+            <div id="booking-area" class="flex-1 overflow-y-auto p-12 bg-white hidden flex-col custom-scrollbar">
+                <div class="section-title mb-6">Scheduling Matrix</div>
+                <h4 class="text-4xl font-black beauty-text uppercase tracking-tighter mb-12">Bespoke <span
+                        class="text-brand-pink/20">Configuration.</span></h4>
+
+                <div class="space-y-12">
+                    <div>
+                        <label
+                            class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-6">Architecture
+                            Sector</label>
+                        <div class="grid grid-cols-1 gap-4" id="booking-services-list">
+                            <p
+                                class="text-[9px] text-brand-pink/40 font-black uppercase tracking-[0.5em] py-6 italic animate-pulse">
+                                Initializing Protocol Services...</p>
+                        </div>
+                    </div>
+
+                    <div class="p-8 bg-brand-pink-light border border-brand-border rounded-luxury">
+                        <label
+                            class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Temporal
+                            Allocation</label>
+                        <input type="text" id="appointment-datetime"
+                            class="w-full bg-transparent text-text-main focus:outline-none text-[12px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                            placeholder="SELECT SLOT...">
+                    </div>
+                </div>
+
+                <div class="mt-20 pt-10 border-t border-brand-border">
+                    <div class="flex justify-between items-center mb-10">
+                        <div>
+                            <p class="text-[8px] font-black text-brand-gray uppercase tracking-widest mb-2">Total
+                                Valuation
+                            </p>
+                            <span class="text-4xl font-black text-text-main tracking-tighter" id="booking-total">ZMW
+                                0.00</span>
+                        </div>
+                    </div>
+                    <button id="confirm-booking-btn"
+                        class="w-full bg-brand-pink text-white font-black py-8 rounded-luxury shadow-2xl hover:bg-brand-pink/90 transition-all text-[10px] uppercase tracking-[0.5em] pink-glow">
+                        Execute Session Protocol
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div id="create-post-modal"
+        class="fixed inset-0 z-[200] hidden bg-white/95 backdrop-blur-3xl flex items-center justify-center p-8 transition-all duration-700">
+        <div
+            class="glass w-full max-w-2xl rounded-luxury border border-brand-border shadow-2xl relative overflow-hidden p-16">
+            <div class="absolute inset-0 bg-brand-pink/5 pointer-events-none"></div>
+
+            <button id="close-post-modal"
+                class="absolute top-12 right-12 text-brand-gray/40 hover:text-brand-pink transition-all">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="mb-16">
+                <div class="section-title mb-6">Visual Distribution</div>
+                <h2 class="text-5xl font-black text-brand-pink uppercase tracking-tighter leading-none">Publish <span
+                        class="text-white/20">Archive.</span></h2>
+                <p class="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] mt-10">Deploy your
+                    high-fidelity captures to the global collective.</p>
+            </div>
+
+            <form id="create-post-form" class="space-y-12">
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-px bg-brand-pink-soft border border-brand-border overflow-hidden rounded-luxury">
+                    <div class="p-8 bg-white">
+                        <label
+                            class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Capture
+                            Source</label>
+                        <input type="text" id="post-image-url" required
+                            class="w-full bg-transparent text-text-main focus:outline-none text-[12px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                            placeholder="INPUT SOURCE URL...">
+                    </div>
+                    <div class="p-8 bg-white">
+                        <label
+                            class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Aesthetic
+                            Sector</label>
+                        <select id="post-category" required
+                            class="w-full bg-transparent text-text-main focus:outline-none text-[12px] font-black uppercase tracking-widest appearance-none cursor-pointer">
+                            <option value="nail" class="bg-white">NAIL ARCHITECTURE</option>
+                            <option value="lash" class="bg-white">LASH SYNTHESIS</option>
+                            <option value="other" class="bg-white">BESPOKE ASSETS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-8 bg-white border border-brand-border rounded-luxury">
+                    <label class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Narrative
+                        Layer</label>
+                    <textarea id="post-caption" required rows="4"
+                        class="w-full bg-transparent text-text-main focus:outline-none text-[10px] font-black uppercase tracking-widest placeholder:text-brand-gray/20 resize-none leading-loose"
+                        placeholder="NARRATE YOUR ARTISTRY..."></textarea>
+                </div>
+
+                <button type="submit" id="post-submit-btn"
+                    class="w-full bg-brand-pink text-white font-black py-8 rounded-luxury hover:bg-brand-pink/90 transition-all shadow-2xl text-[10px] uppercase tracking-[0.5em] flex justify-center items-center group">
+                    <span class="relative z-10">Execute Deployment</span>
+                    <svg id="post-spinner" class="hidden animate-spin ml-4 h-5 w-5 text-black"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bookings Modal -->
+    <div id="bookings-modal"
+        class="fixed inset-0 z-[100] hidden bg-white/95 backdrop-blur-3xl flex items-center justify-center p-8 transition-all duration-700">
+        <div
+            class="glass w-full max-w-4xl rounded-luxury border border-brand-border shadow-2xl relative overflow-hidden p-20">
+            <div class="absolute inset-0 bg-brand-pink/5 pointer-events-none"></div>
+
+            <button
+                onclick="document.getElementById('bookings-modal').classList.remove('flex'); document.getElementById('bookings-modal').classList.add('hidden'); document.body.style.overflow = 'auto';"
+                class="absolute top-12 right-12 text-brand-gray/40 hover:text-brand-pink transition-all">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="mb-16 text-center">
+                <div class="section-title mb-6">Service Archives</div>
+                <h2 class="text-6xl font-black beauty-text uppercase tracking-tighter leading-none">Your <span
+                        class="text-brand-pink/20">Sessions.</span></h2>
+            </div>
+
+            <div id="bookings-list" class="space-y-8 max-h-[50vh] overflow-y-auto pr-8 custom-scrollbar">
+                <!-- Data dynamically injected -->
+            </div>
+
+            <div class="mt-20 pt-10 border-t border-brand-border flex justify-between items-center text-center">
+                <div class="flex-1">
+                    <p class="text-[8px] font-black text-brand-gray uppercase tracking-widest mb-4">Network Protocol</p>
+                    <div class="flex items-center justify-center gap-12 group">
+                        <div class="glass px-10 py-6 rounded-luxury border border-brand-border">
+                            <p class="text-[9px] font-black text-text-main uppercase tracking-[0.4em]">Invite Architect
+                            </p>
+                        </div>
+                        <button id="copy-referral-btn"
+                            class="bg-brand-pink text-white px-12 py-6 rounded-luxury font-black text-[9px] uppercase tracking-[0.4em] hover:bg-brand-pink/90 transition-all shadow-2xl">
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Submission Modal -->
+    <div id="review-modal"
+        class="glass-dark w-full max-w-5xl rounded-luxury p-16 relative border border-white/5 shadow-[0_0_150px_rgba(236,72,153,0.05)] overflow-y-auto max-h-[95vh] custom-scrollbar">
+        <!-- Close btn -->
+        <button
+            onclick="document.getElementById('pro-portal-modal').classList.remove('flex'); document.getElementById('pro-portal-modal').classList.add('hidden');"
+            class="absolute top-12 right-12 text-white/20 hover:text-white transition-all">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12">
+                </path>
+            </svg>
+        </button>
+
+        <div class="flex justify-between items-start mb-16">
+            <div>
+                <div class="section-title mb-4">Operations Terminal</div>
+                <h2 id="portal-title" class="text-6xl font-black text-white uppercase tracking-tighter leading-none">
+                    Architect
+                    <span class="text-white/20">Portal.</span>
+                </h2>
+                <p class="text-white/30 text-[10px] font-black uppercase tracking-[0.4em] mt-6">Secure
+                    High-Bandwidth
+                    Control Interface.</p>
+            </div>
+            <div class="bg-white/[0.02] px-8 py-3 border border-white/5 flex items-center gap-4">
+                <div class="w-2.5 h-2.5 rounded-full bg-accent-blue shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                </div>
+                <span class="text-[10px] font-black text-white uppercase tracking-[0.3em]">Protocol
+                    Validated</span>
+            </div>
+        </div>
+
+        <div class="flex border-b border-white/5 mb-16 sticky top-0 bg-black/40 backdrop-blur-3xl z-10 -mx-16 px-16">
+            <button id="tab-dashboard"
+                class="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-white border-b-2 border-white transition-all">Analytics</button>
+            <button id="tab-appointments"
+                class="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-white border-b-2 border-transparent transition-all">Deployments</button>
+            <button id="tab-services"
+                class="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-white border-b-2 border-transparent transition-all">Inventory</button>
+            <button id="tab-profile"
+                class="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-white border-b-2 border-transparent transition-all">Identity</button>
+            <button id="tab-verify"
+                class="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-white border-b-2 border-transparent transition-all">Validation</button>
+            <button id="tab-schedule"
+                class="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-white border-b-2 border-transparent transition-all">Availability</button>
+        </div>
+
+        <!-- Dashboard / Stats Section -->
+        <div id="portal-section-dashboard" class="space-y-12">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5">
+                <div class="bg-white/[0.01] p-10">
+                    <div class="bg-white p-10">
+                        <p class="text-[9px] font-black text-brand-pink uppercase tracking-[0.5em] mb-6">Gross
+                            Yield</p>
+                        <h4 id="portal-stat-earnings" class="text-4xl font-black text-text-main tracking-tighter">
+                            ZMW 0</h4>
+                    </div>
+                    <div class="bg-brand-pink-light p-10 border-r border-brand-border">
+                        <p class="text-[9px] font-black text-brand-gray uppercase tracking-[0.5em] mb-6">Capital
+                            Reserve</p>
+                        <h4 id="portal-stat-earnings" class="text-4xl font-black text-text-main tracking-tighter">
+                            ZMW
+                            0.00</h4>
+                    </div>
+                    <div class="bg-white p-10">
+                        <p class="text-[9px] font-black text-brand-pink uppercase tracking-[0.5em] mb-6">Loyalty
+                            Core</p>
+                        <h4 id="portal-stat-points" class="text-4xl font-black text-text-main tracking-tighter">0
+                        </h4>
+                    </div>
+                    <div class="bg-brand-pink-soft p-10 border-l border-brand-border">
+                        <p class="text-[9px] font-black text-brand-gray uppercase tracking-[0.5em] mb-6">Tier
+                            Status</p>
+                        <h4 id="portal-stat-level"
+                            class="text-2xl font-black text-brand-pink uppercase tracking-[0.3em]">Bronze
+                        </h4>
+                    </div>
+                </div>
+
+                <!-- Achievements & Badges -->
+                <div
+                    class="bg-white p-12 rounded-luxury border border-brand-border shadow-2xl relative overflow-hidden">
+                    <h3
+                        class="font-black text-text-main mb-10 flex items-center gap-6 text-[10px] uppercase tracking-[0.5em]">
+                        <span class="w-1.5 h-6 bg-brand-pink pink-glow"></span>
+                        Merit
+                        Badge Collection
+                    </h3>
+                    <div id="portal-achievements-list"
+                        class="flex gap-10 overflow-x-auto pb-6 custom-scrollbar grayscale opacity-20">
+                        <div class="flex-none w-24 text-center">
+                            <div
+                                class="w-16 h-16 rounded-luxury bg-brand-pink-soft mx-auto mb-4 flex items-center justify-center border border-brand-border text-brand-pink">
+                                ✦</div>
+                            <p class="text-[8px] font-black text-brand-gray uppercase tracking-widest">Rising Star
+                            </p>
+                        </div>
+                        <div class="flex-none w-24 text-center">
+                            <div
+                                class="w-16 h-16 rounded-luxury bg-brand-pink-soft mx-auto mb-4 flex items-center justify-center border border-brand-border text-brand-pink">
+                                ❂</div>
+                            <p class="text-[8px] font-black text-brand-gray uppercase tracking-widest">Fast Biz
+                            </p>
+                        </div>
+                        <div class="flex-none w-24 text-center">
+                            <div
+                                class="w-16 h-16 rounded-luxury bg-brand-pink-soft mx-auto mb-4 flex items-center justify-center border border-brand-border text-brand-pink">
+                                ❖</div>
+                            <p class="text-[8px] font-black text-brand-gray uppercase tracking-widest">On Fire</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Growth Insight Chart Placeholder -->
+                <div class="bg-white p-12 rounded-luxury border border-brand-border shadow-2xl">
+                    <h3
+                        class="font-black text-text-main mb-10 flex items-center gap-6 text-[10px] uppercase tracking-[0.5em]">
+                        <span class="w-1.5 h-6 bg-brand-pink pink-glow"></span>
+                        Ecosystem
+                        Integration
+                    </h3>
+                    <div id="growth-chart-container"
+                        class="h-64 bg-brand-pink-light rounded-luxury flex items-center justify-center relative overflow-hidden px-8 border border-brand-border">
+                        <div class="text-center">
+                            <div
+                                class="animate-spin h-8 w-8 border-2 border-brand-pink/10 border-t-brand-pink rounded-full mx-auto mb-6">
+                            </div>
+                            <p class="text-[9px] text-brand-gray uppercase tracking-[0.5em]">Compiling
+                                Metrics...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Section (Hidden) -->
+            <div id="portal-section-appointments" class="space-y-10 hidden">
+                <div class="flex justify-between items-center bg-brand-pink-light p-6 border border-brand-border">
+                    <h3 class="text-[10px] font-black text-text-main uppercase tracking-[0.4em]">Active Deployments
+                    </h3>
+                    <div class="flex gap-px bg-brand-border p-px">
+                        <button onclick="loadProAppointments('pending')"
+                            class="text-[8px] bg-white text-brand-gray px-5 py-2 font-black uppercase tracking-widest hover:text-brand-pink transition-all">Pending</button>
+                        <button onclick="loadProAppointments('confirmed')"
+                            class="text-[8px] bg-brand-pink text-white px-5 py-2 font-black uppercase tracking-widest active:scale-95 transition-all">Confirmed</button>
+                    </div>
+                </div>
+                <div id="portal-appointments-list" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <p
+                        class="text-center text-brand-gray text-[10px] font-black uppercase tracking-widest py-12 italic">
+                        Terminal Idle. ✨</p>
+                </div>
+            </div>
+
+            <!-- Services Management Section (Hidden) -->
+            <div id="portal-section-services" class="space-y-10 hidden">
+                <div class="flex justify-between items-center bg-brand-pink-light p-6 border border-brand-border">
+                    <h3 class="text-[10px] font-black text-text-main uppercase tracking-[0.4em]">Service Inventory
+                    </h3>
+                    <button id="add-service-btn"
+                        class="text-[8px] bg-brand-pink text-white px-6 py-2.5 font-black uppercase tracking-widest hover:bg-brand-pink/90 transition-all">+
+                        Add Component</button>
+                </div>
+
+                <div id="pro-services-list"
+                    class="space-y-px bg-brand-pink-soft border border-brand-border max-h-80 overflow-y-auto custom-scrollbar">
+                    <!-- Dynamic services will be injected here -->
+                    <p
+                        class="text-center text-brand-gray text-[10px] font-black uppercase tracking-widest py-10 italic">
+                        Accessing Ledger...</p>
+                </div>
+            </div>
+
+            <!-- Profile Settings Section (Hidden) -->
+            <div id="portal-section-profile" class="space-y-10 hidden">
+                <h3 class="text-[10px] font-black text-text-main uppercase tracking-[0.4em] px-2">Identity
+                    Configuration
+                </h3>
+                <div class="space-y-8 bg-white p-10 border border-brand-border shadow-xl">
+                    <div>
+                        <label class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Bio
+                            Narrative</label>
+                        <textarea id="pro-bio" rows="3"
+                            class="w-full px-6 py-5 rounded-luxury border border-brand-border bg-brand-pink-light text-text-main focus:border-brand-pink focus:outline-none transition-all text-[10px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                            placeholder="TELL THE WORLD ABOUT YOUR ARTISTRY..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-px bg-brand-border border border-brand-border">
+                        <div class="p-4 bg-white">
+                            <label
+                                class="block text-[7px] font-black text-brand-gray uppercase tracking-[0.4em] mb-3">Geo-Location</label>
+                            <input type="text" id="pro-location"
+                                class="w-full bg-transparent text-[10px] font-black uppercase tracking-widest text-text-main focus:outline-none placeholder:text-brand-gray/20"
+                                placeholder="E.G. LUSAKA, ZM">
+                        </div>
+                        <div class="p-4 bg-white">
+                            <label
+                                class="block text-[7px] font-black text-brand-gray uppercase tracking-[0.4em] mb-3">Communication
+                                Uplink</label>
+                            <input type="text" id="pro-whatsapp"
+                                class="w-full bg-transparent text-[10px] font-black uppercase tracking-widest text-text-main focus:outline-none placeholder:text-brand-gray/20"
+                                placeholder="+260...">
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[8px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Specialization
+                            Matrix</label>
+                        <input type="text" id="pro-specialties"
+                            class="w-full px-6 py-5 rounded-luxury border border-brand-border bg-brand-pink-light text-text-main focus:border-brand-pink focus:outline-none transition-all text-[10px] font-black uppercase tracking-widest placeholder:text-brand-gray/20"
+                            placeholder="GEL POLISH, NAIL ART, ACRYLICS">
+                    </div>
+                    <button id="save-profile-btn"
+                        class="w-full bg-brand-pink text-white font-black py-6 rounded-luxury hover:bg-brand-pink/90 transition-all shadow-2xl text-[9px] uppercase tracking-[0.4em] mt-8">Commit
+                        Identity Changes</button>
+                </div>
+            </div>
+
+            <!-- Verify / Certs Section (Hidden) -->
+            <div id="portal-section-verify" class="grid md:grid-cols-2 gap-10 hidden">
+                <!-- Certification Upload -->
+                <div class="space-y-8">
+                    <h3
+                        class="text-[10px] font-black text-text-main uppercase tracking-[0.4em] border-b border-brand-border pb-4">
+                        Credentials</h3>
+                    <div class="border border-dashed border-brand-border rounded-luxury p-12 text-center bg-brand-pink-soft hover:bg-brand-pink-light transition-all cursor-pointer group"
+                        onclick="document.getElementById('cert-upload').click()">
+                        <div
+                            class="mx-auto h-12 w-12 text-brand-pink/20 group-hover:text-brand-pink transition-all mb-4 flex items-center justify-center text-4xl">
+                            ❖</div>
+                        <span class="text-[9px] font-black text-brand-pink uppercase tracking-[0.5em]">Upload
+                            Documentation</span>
+                        <input id="cert-upload" type="file" accept=".pdf,image/*" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Verified Reviews -->
+                <div class="space-y-8">
+                    <h3
+                        class="text-[10px] font-black text-text-main uppercase tracking-[0.4em] border-b border-brand-border pb-4">
+                        Performance Audit</h3>
+                    <div id="portal-reviews-container"
+                        class="bg-white rounded-luxury p-8 border border-brand-border h-64 overflow-y-auto space-y-6 custom-scrollbar">
+                        <p
+                            class="text-[10px] text-brand-gray/40 font-black uppercase tracking-widest text-center mt-12 py-4 animate-pulse">
+                            Scanning Reviews...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Section (Hidden) -->
+            <div id="portal-section-schedule" class="space-y-10 hidden">
+                <div class="flex justify-between items-center bg-brand-pink-light p-6 border border-brand-border">
+                    <h3 class="text-[10px] font-black text-text-main uppercase tracking-[0.4em]">Chronos Allocation
+                    </h3>
+                    <button id="save-working-hours-btn"
+                        class="text-[8px] bg-brand-pink text-white px-6 py-2.5 font-black uppercase tracking-widest hover:bg-brand-pink/90 transition-all">Synchronize
+                        Hours</button>
+                </div>
+
+                <div id="working-hours-grid"
+                    class="grid grid-cols-1 gap-px bg-brand-border border border-brand-border max-h-64 overflow-y-auto custom-scrollbar">
+                    <!-- Day rows will be injected here -->
+                    <p
+                        class="text-center text-brand-gray/40 text-[10px] font-black uppercase tracking-widest py-10 italic">
+                        Mapping Timeframes...</p>
+                </div>
+
+                <div class="pt-10 border-t border-brand-border">
+                    <h3 class="text-[10px] font-black text-text-main uppercase tracking-[0.4em] mb-6">Restricted
+                        Time Zones
+                    </h3>
+                    <div class="flex gap-px bg-brand-border border border-brand-border p-px">
+                        <input type="text" id="blocked-date-picker" placeholder="SELECT ARCHIVE RANGE..."
+                            class="flex-1 bg-white px-6 py-4 text-[10px] font-black uppercase tracking-widest text-text-main focus:outline-none">
+                        <button id="add-blocked-slot-btn"
+                            class="bg-brand-pink text-white px-8 py-4 font-black text-[9px] uppercase tracking-widest hover:bg-brand-pink/90">Restrict</button>
+                    </div>
+                    <ul id="blocked-slots-list" class="space-y-px bg-brand-pink-soft mt-6">
+                        <!-- Blocked slots injected here -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Add/Edit Service Modal (Nested overlay, small) -->
+            <div id="service-form-overlay"
+                class="absolute inset-0 bg-white/98 backdrop-blur-3xl z-30 rounded-luxury hidden flex-col p-20 transition-all shadow-2xl">
+                <div class="flex justify-between items-center mb-16">
+                    <h3 id="service-form-title" class="text-4xl font-black text-brand-pink uppercase tracking-tighter">
+                        New
+                        <span class="text-brand-pink/20">Asset.</span>
+                    </h3>
+                    <button id="close-service-form" class="text-brand-gray/40 hover:text-brand-pink transition-all">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                d="M6 18L18 6M6 6l12 12">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="service-form" class="space-y-12 max-w-3xl">
+                    <input type="hidden" id="service-id">
+                    <div>
+                        <label
+                            class="block text-[9px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Operational
+                            Title</label>
+                        <input type="text" id="service-title" required
+                            class="w-full px-8 py-6 rounded-luxury border border-brand-border bg-brand-pink-soft focus:border-brand-pink focus:outline-none transition-all text-[11px] font-black uppercase tracking-widest text-text-main placeholder:text-brand-gray/20"
+                            placeholder="AMANDA SMITH">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[9px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Classification
+                            Matrix</label>
+                        <select id="service-category" required
+                            class="w-full px-8 py-6 rounded-luxury border border-brand-border bg-white focus:border-brand-pink focus:outline-none transition-all text-[11px] font-black uppercase tracking-widest text-text-main">
+                            <option value="nail">NAIL ARCHITECTURE</option>
+                            <option value="lash">LASH DISTRIBUTION</option>
+                            <option value="other">OTHER ASSETS</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-10">
+                        <div>
+                            <label
+                                class="block text-[9px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Valuation
+                                (ZMW)</label>
+                            <input type="number" id="service-price" required
+                                class="w-full px-8 py-6 rounded-luxury border border-brand-border bg-brand-pink-soft focus:border-brand-pink focus:outline-none transition-all text-[11px] font-black uppercase tracking-widest text-text-main"
+                                placeholder="350">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[9px] font-black text-brand-gray uppercase tracking-[0.5em] mb-4">Chronos
+                                (Min)</label>
+                            <input type="number" id="service-duration" required
+                                class="w-full px-8 py-6 rounded-luxury border border-brand-border bg-brand-pink-soft focus:border-brand-pink focus:outline-none transition-all text-[11px] font-black uppercase tracking-widest text-text-main"
+                                placeholder="60">
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-brand-pink text-white font-black py-8 rounded-luxury shadow-2xl hover:bg-brand-pink/90 transition-all mt-10 text-[10px] uppercase tracking-[0.5em] pink-glow">
+                        Commit to Ledger
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cinematic Hero Section -->
+    <section class="relative w-full min-h-[90vh] flex flex-col items-center justify-center pt-24 overflow-hidden">
+        <!-- Modern Abstract Background Element -->
+        <div class="absolute inset-0 z-0">
+            <div
+                class="absolute top-[-20%] right-[-10%] w-[80%] h-[80%] bg-brand-pink/5 pointer-events-none opacity-40 blur-[150px]">
+            </div>
+            <div
+                class="absolute bottom-[-10%] left-[-20%] w-[80%] h-[80%] bg-brand-pink-soft pointer-events-none opacity-30 blur-[150px]">
+            </div>
+        </div>
+
+        <div class="relative z-10 max-w-6xl mx-auto px-8 w-full text-center">
+            <div class="section-title mb-8">Structural Elegance</div>
+
+            <h1 class="text-7xl md:text-[10rem] font-black mb-12 leading-[0.85] beauty-text tracking-tighter uppercase">
+                Artistry <br />
+                <span class="text-brand-pink/20">Defined.</span>
+            </h1>
+
+            <p
+                class="text-xs md:text-sm text-brand-gray mb-20 max-w-2xl mx-auto font-black uppercase tracking-[0.5em] leading-loose">
+                Synchronizing world-class nail architects who redefine the global aesthetic. <br
+                    class="hidden md:block" />
+                Discovery through precision and elevated craftsmanship.
+            </p>
+
+            <!-- Search Container -->
+            <div class="w-full max-w-2xl mx-auto mb-24">
+                <div class="glass p-2 rounded-luxury flex gap-2 border border-brand-border pink-glow shadow-2xl">
+                    <div class="flex-1 relative">
+                        <input type="text" id="hero-search" placeholder="SCAN ARCHIVE FOR ARCHITECTS..."
+                            class="w-full bg-transparent border-none focus:ring-0 text-text-main px-8 py-6 font-black placeholder:text-brand-gray/20 text-[10px] uppercase tracking-[0.3em]">
+                    </div>
+                    <button id="hero-search-btn"
+                        class="bg-brand-pink text-white px-12 py-6 rounded-luxury hover:bg-brand-pink/90 transition-all font-black uppercase tracking-[0.4em] text-[9px]">
+                        Execute
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-10">
+                <a href="#professionals"
+                    class="bg-white hover:bg-brand-pink-soft text-text-main px-10 py-5 rounded-luxury border border-brand-border transition-all font-black uppercase tracking-[0.4em] text-[9px] shadow-lg flex items-center gap-3">
+                    Experience Beauty
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
+                <a href="#join"
+                    class="flex items-center gap-4 group cursor-pointer border-b border-brand-border pb-2 hover:border-brand-pink transition-all">
+                    <span class="text-[9px] font-black text-brand-pink uppercase tracking-[0.5em]">Join the
+                        Collective</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Decorative Bottom Border -->
+        <div
+            class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent">
+        </div>
+    </section>
+
+    <!-- Inspiration Social Feed -->
+    <section id="inspiration" class="w-full py-32 px-8 bg-white relative overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-8">
+                <div>
+                    <div class="section-title mb-6">Inspiration Archive</div>
+                    <h2 class="text-5xl md:text-7xl font-black text-text-main uppercase tracking-tighter leading-tight">
+                        The Physics of <br /><span class="text-brand-pink/20">Artistry.</span>
+                    </h2>
+                    <p
+                        class="text-brand-gray mt-10 max-w-xl font-black text-[9px] uppercase tracking-[0.4em] leading-loose">
+                        Discovery of emergent styles within the collective network of architectural nail
+                        designers.</p>
+                </div>
+                <button id="open-create-post"
+                    class="hidden md:flex items-center gap-5 bg-brand-pink text-white px-12 py-6 rounded-luxury hover:bg-brand-pink/90 transition-all shadow-2xl text-[9px] font-black uppercase tracking-[0.5em]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    Publish Work
+                </button>
+            </div>
+
+            <!-- Vibe Leaderboard (Luxury Glass Style) -->
+            <div
+                class="mb-24 glass p-12 rounded-luxury relative overflow-hidden border border-brand-border pink-glow shadow-2xl">
+                <div class="flex items-center justify-between mb-12 border-b border-brand-border pb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-2 h-2 rounded-full bg-brand-pink pink-glow"></div>
+                        <h3 class="text-[9px] font-black uppercase tracking-[0.5em] text-text-main">Emergent
+                            Collective</h3>
+                    </div>
+                    <span class="text-[8px] font-black text-brand-gray/40 uppercase tracking-widest">Live
+                        Metrics</span>
+                </div>
+                <div id="vibe-leaderboard"
+                    class="flex gap-12 overflow-x-auto pb-6 custom-scrollbar grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all">
+                    <!-- Top performers injected here -->
+                    <div
+                        class="flex-none flex items-center gap-6 bg-white/[0.02] p-6 rounded-luxury border border-white/5 min-w-[280px]">
+                        <div class="w-14 h-14 rounded-luxury bg-white/5"></div>
+                        <div class="space-y-4">
+                            <div class="h-2 w-28 bg-white/10 rounded-full"></div>
+                            <div class="h-1.5 w-16 bg-white/5 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="open-create-post-mobile"
+                class="md:hidden w-full mb-12 flex items-center justify-center gap-3 bg-pink-deep text-white px-8 py-4 rounded-full shadow-lg text-[10px] font-bold uppercase tracking-widest">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                    </path>
+                </svg>
+                Share Your Work
+            </button>
+
+            <!-- Feed Container -->
+            <div id="social-feed-container" class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
+                <!-- Posts will be dynamically injected here -->
+                <div class="col-span-full py-20 text-center">
+                    <div
+                        class="animate-spin h-6 w-6 border-2 border-pink-500 border-t-transparent rounded-full mx-auto mb-4">
+                    </div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Curating Gallery...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="w-full py-32 px-8 bg-white border-y border-brand-border relative overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-28">
+                <div class="section-title mb-6">System Architecture</div>
+                <h2 class="text-5xl md:text-6xl font-black text-text-main uppercase tracking-tighter">The Protocol
+                    for <span class="text-brand-pink/20">Perfection.</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-brand-border border border-brand-border">
+                <!-- For Clients -->
+                <div class="bg-white p-20 relative group overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-pink/5 opacity-40 blur-3xl"></div>
+                    <h3
+                        class="text-3xl font-black mb-20 text-text-main border-b border-brand-border pb-8 uppercase tracking-[0.4em]">
+                        The <span class="text-brand-pink/20">Aesthetic.</span></h3>
+                    <ul class="space-y-20">
+                        <li class="flex gap-10">
+                            <span
+                                class="text-[9px] font-black w-12 h-12 border border-brand-border flex items-center justify-center text-text-main shadow-2xl shrink-0">01</span>
+                            <div>
+                                <h4 class="text-[10px] font-black text-text-main uppercase tracking-[0.5em] mb-6">
+                                    Curated
+                                    Archives</h4>
+                                <p
+                                    class="text-brand-gray text-[11px] font-black leading-loose uppercase tracking-widest">
+                                    Access a global network of high-fidelity visual documentation and
+                                    architectural nail
+                                    designs.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-10">
+                            <span
+                                class="text-[9px] font-black w-12 h-12 border border-brand-border flex items-center justify-center text-text-main shadow-2xl shrink-0">02</span>
+                            <div>
+                                <h4 class="text-[10px] font-black text-text-main uppercase tracking-[0.5em] mb-6">
+                                    Verified
+                                    Execution</h4>
+                                <p
+                                    class="text-brand-gray text-[11px] font-black leading-loose uppercase tracking-widest">
+                                    Direct communication with architects through high-precision scheduling and
+                                    valuation
+                                    matrices.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- For Professionals -->
+                <div class="bg-brand-pink-light p-20 relative group overflow-hidden">
+                    <div class="absolute bottom-0 right-0 w-32 h-32 bg-brand-pink-soft opacity-40 blur-3xl"></div>
+                    <h3
+                        class="text-3xl font-black mb-20 text-text-main border-b border-brand-border pb-8 uppercase tracking-[0.4em]">
+                        The <span class="text-brand-pink/20">Collective.</span></h3>
+                    <ul class="space-y-20">
+                        <li class="flex gap-10">
+                            <span
+                                class="text-[9px] font-black w-12 h-12 border border-brand-border flex items-center justify-center text-text-main shadow-2xl shrink-0">01</span>
+                            <div>
+                                <h4 class="text-[10px] font-black text-text-main uppercase tracking-[0.5em] mb-6">
+                                    Studio
+                                    Management</h4>
+                                <p
+                                    class="text-brand-gray text-[11px] font-black leading-loose uppercase tracking-widest">
+                                    Scalable infrastructure for individual creators to maintain absolute brand
+                                    sovereignty and data ownership.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-10">
+                            <span
+                                class="text-[9px] font-black w-12 h-12 border border-brand-border flex items-center justify-center text-text-main shadow-2xl shrink-0">02</span>
+                            <div>
+                                <h4 class="text-[10px] font-black text-text-main uppercase tracking-[0.5em] mb-6">
+                                    Visual
+                                    Distribution</h4>
+                                <p
+                                    class="text-brand-gray text-[11px] font-black leading-loose uppercase tracking-widest">
+                                    Accelerated exposure through a curated ecosystem built for high-level beauty
+                                    architecture.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Professionals -->
+    <section id="professionals" class="w-full py-24 px-8 max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+            <div>
+                <div class="section-title">The Collective</div>
+                <h2 class="text-4xl font-black beauty-text tracking-tighter">Bespoke <span
+                        class="text-brand-pink/20">Architects.</span></h2>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button
+                    class="category-pill active text-brand-pink border-b-2 border-brand-pink px-2 py-2 text-[9px] font-black uppercase tracking-[0.4em] transition-all"
+                    data-category="all">Collective</button>
+                <button
+                    class="category-pill text-brand-gray/40 border-b-2 border-transparent px-2 py-2 text-[9px] font-black uppercase tracking-[0.4em] hover:text-brand-pink transition-all"
+                    data-category="nail">Nail Architecture</button>
+                <button
+                    class="category-pill text-brand-gray/40 border-b-2 border-transparent px-2 py-2 text-[9px] font-black uppercase tracking-[0.4em] hover:text-brand-pink transition-all"
+                    data-category="lash">Lash Synthesis</button>
+                <button
+                    class="category-pill text-brand-gray/40 border-b-2 border-transparent px-2 py-2 text-[9px] font-black uppercase tracking-[0.4em] hover:text-brand-pink transition-all"
+                    data-category="other">Bespoke Assets</button>
+            </div>
+        </div>
+
+        <div id="featured-pros-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Artist Card 1 -->
+            <div
+                class="pro-card glass rounded-luxury overflow-hidden border border-brand-border group shadow-2xl relative">
+                <div
+                    class="absolute inset-0 bg-brand-pink opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none">
+                </div>
+                <div class="h-64 overflow-hidden relative">
+                    <img src="/assets/nail-1.png" alt="Nail Art Portfolio"
+                        class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
+                        onerror="this.src='https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'" />
+                    <div
+                        class="absolute top-6 right-6 bg-black/40 backdrop-blur-xl px-4 py-2 rounded-luxury text-[9px] font-black text-white/80 border border-white/10 flex items-center gap-2">
+                        ✧ 5.0
+                    </div>
+                </div>
+                <div class="p-10">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-[12px] font-black uppercase tracking-[0.3em] text-text-main">Sarah M.</h3>
+                        <svg class="w-5 h-5 text-brand-pink" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 2L14.71 4.29L18.11 3.54L18.86 6.94L22 8.66L20.29 12L22 15.34L18.86 17.06L18.11 20.46L14.71 19.71L12 22L9.29 19.71L5.89 20.46L5.14 17.06L2 15.34L3.71 12L2 8.66L5.14 6.94L5.89 3.54L9.29 4.29L12 2Z"
+                                fill="currentColor" />
+                        </svg>
+                    </div>
+                    <p class="text-brand-gray/40 text-[10px] font-bold uppercase tracking-widest mb-10 leading-relaxed">
+                        Specializes in acrylic architecture, 3D synth art, and
+                        holographic finishes.</p>
+                    <div class="flex justify-between items-center border-t border-brand-border pt-8">
+                        <div>
+                            <p class="text-[8px] text-brand-gray/20 font-black uppercase tracking-widest mb-1">
+                                Valuation from
+                            </p>
+                            <p class="text-2xl font-black text-text-main" data-base-price="350">ZMW 350</p>
+                        </div>
+                        <button
+                            class="view-profile-btn bg-brand-pink text-white px-8 py-4 rounded-luxury text-[9px] font-black uppercase tracking-[0.4em] hover:bg-brand-pink/90 transition-all shadow-2xl"
+                            data-pro="Sarah M.">Initialize</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artist Card 2 -->
+            <div
+                class="pro-card glass rounded-luxury overflow-hidden border border-brand-border group shadow-2xl relative">
+                <div
+                    class="absolute inset-0 bg-brand-pink opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none">
+                </div>
+                <div class="h-64 overflow-hidden relative">
+                    <img src="/assets/nail-2.png" alt="Lash Portfolio"
+                        class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
+                        onerror="this.src='https://images.unsplash.com/photo-1512496015851-a1dc8a47814b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'" />
+                    <div
+                        class="absolute top-6 right-6 bg-white/40 backdrop-blur-xl px-4 py-2 rounded-luxury text-[9px] font-black text-brand-pink border border-white/10 flex items-center gap-2">
+                        ✧ 5.0
+                    </div>
+                </div>
+                <div class="p-10">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-[12px] font-black uppercase tracking-[0.3em] text-text-main">Chloe T.</h3>
+                        <svg class="w-5 h-5 text-brand-pink" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 2L14.71 4.29L18.11 3.54L18.86 6.94L22 8.66L20.29 12L22 15.34L18.86 17.06L18.11 20.46L14.71 19.71L12 22L9.29 19.71L5.89 20.46L5.14 17.06L2 15.34L3.71 12L2 8.66L5.14 6.94L5.89 3.54L9.29 4.29L12 2Z"
+                                fill="currentColor" />
+                        </svg>
+                    </div>
+                    <p class="text-brand-gray/40 text-[10px] font-bold uppercase tracking-widest mb-10 leading-relaxed">
+                        Master lash architect specializing in volumetric synthesis and
+                        architectural lash mapping.</p>
+                    <div class="flex justify-between items-center border-t border-brand-border pt-8">
+                        <div>
+                            <p class="text-[8px] text-brand-gray/20 font-black uppercase tracking-widest mb-1">
+                                Valuation from
+                            </p>
+                            <p class="text-2xl font-black text-text-main" data-base-price="450">ZMW 450</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <button
+                                class="leave-review-btn text-brand-pink/20 hover:text-brand-pink transition-colors p-3 bg-brand-pink-soft rounded-luxury border border-brand-border"
+                                title="Initialize Audit" data-pro="Chloe T.">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                                    </path>
+                                </svg>
+                            </button>
+                            <button
+                                class="view-profile-btn bg-brand-pink text-white px-8 py-4 rounded-luxury text-[9px] font-black uppercase tracking-[0.4em] hover:bg-brand-pink/90 transition-all shadow-2xl"
+                                data-pro="Chloe T.">Initialize</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artist Card 3 -->
+            <div
+                class="pro-card glass rounded-luxury overflow-hidden border border-brand-border group shadow-2xl relative">
+                <div
+                    class="absolute inset-0 bg-brand-pink opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none">
+                </div>
+                <div class="h-64 overflow-hidden relative">
+                    <img src="/assets/nail-3.png" alt="Bespoke Portfolio"
+                        class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
+                        onerror="this.src='https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'" />
+                    <div
+                        class="absolute top-6 right-6 bg-white/40 backdrop-blur-xl px-4 py-2 rounded-luxury text-[9px] font-black text-brand-pink border border-white/10 flex items-center gap-2">
+                        ✧ 4.8
+                    </div>
+                </div>
+                <div class="p-10">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-[12px] font-black uppercase tracking-[0.3em] text-text-main">Amanda's Studio
+                        </h3>
+                        <svg class="w-5 h-5 text-brand-pink" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 2L14.71 4.29L18.11 3.54L18.86 6.94L22 8.66L20.29 12L22 15.34L18.86 17.06L18.11 20.46L14.71 19.71L12 22L9.29 19.71L5.89 20.46L5.14 17.06L2 15.34L3.71 12L2 8.66L5.14 6.94L5.89 3.54L9.29 4.29L12 2Z"
+                                fill="currentColor" />
+                        </svg>
+                    </div>
+                    <p class="text-brand-gray/40 text-[10px] font-bold uppercase tracking-widest mb-10 leading-relaxed">
+                        Focused on minimalist architectural structure, neutral palettes, and
+                        high-fidelity nail health.</p>
+                    <div class="flex justify-between items-center border-t border-brand-border pt-8">
+                        <div>
+                            <p class="text-[8px] text-brand-gray/20 font-black uppercase tracking-widest mb-1">
+                                Valuation from
+                            </p>
+                            <p class="text-2xl font-black text-text-main" data-base-price="350">ZMW 350</p>
+                        </div>
+                        <button
+                            class="view-profile-btn bg-brand-pink text-white px-8 py-4 rounded-luxury text-[9px] font-black uppercase tracking-[0.4em] hover:bg-brand-pink/90 transition-all shadow-2xl"
+                            data-pro="Amanda's Studio">Initialize</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center md:hidden">
+            <a href="#" class="text-white font-medium hover:underline">View All Professionals &rarr;</a>
+        </div>
+    </section>
+
+    <!-- Map Section: Nail Techs Near Me (Pink Luxury) -->
+    <section id="map-section" class="w-full py-24 px-6 bg-black border-t border-white/5 relative overflow-hidden">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-accent-blue/5 blur-[120px] rounded-full pointer-events-none">
+        </div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <div class="section-title mb-4">Geometric Search</div>
+                <h2 class="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none mb-8">
+                    Architects <span class="text-white/20">Near You.</span></h2>
+                <p class="text-white/30 text-[10px] font-black uppercase tracking-[0.4em]">Locate elite
+                    professionals
+                    within your coordinates.</p>
+            </div>
+
+            <div class="max-w-2xl mx-auto mb-16 relative">
+                <input type="text" id="map-search" placeholder="INPUT COORDINATES OR LOCATION..."
+                    class="w-full px-8 py-6 rounded-luxury border border-white/10 focus:border-white/40 focus:outline-none shadow-2xl text-white pl-16 pr-24 bg-white/[0.02] backdrop-blur-3xl transition-all text-[11px] font-black uppercase tracking-widest placeholder:text-white/10">
+                <svg class="w-6 h-6 absolute left-6 top-1/2 transform -translate-y-1/2 text-white/20" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <button id="search-btn"
+                    class="bg-white text-black px-12 py-6 rounded-luxury hover:bg-gray-200 transition-all font-black uppercase tracking-[0.4em] text-[9px] absolute right-2 top-1/2 -translate-y-1/2">
+                    Execute
+                </button>
+            </div>
+
+            <!-- Custom Floating Zoom Controls -->
+            <div class="flex justify-center gap-6 relative z-20 top-8">
+                <button id="custom-zoom-out"
+                    class="w-14 h-14 bg-white/20 backdrop-blur-3xl rounded-luxury shadow-2xl text-text-main font-black text-2xl flex items-center justify-center hover:bg-brand-pink-soft hover:scale-110 transition-all border border-brand-border">−</button>
+                <button id="custom-zoom-in"
+                    class="w-14 h-14 bg-white/20 backdrop-blur-3xl rounded-luxury shadow-2xl text-text-main font-black text-2xl flex items-center justify-center hover:bg-brand-pink-soft hover:scale-110 transition-all border border-brand-border">+</button>
+            </div>
+
+            <!-- Map Container (Heart Shaped with Pink Glow) -->
+            <div class="flex justify-center relative mt-16 mb-16">
+                <div
+                    class="relative w-[300px] h-[300px] min-[370px]:w-[340px] min-[370px]:h-[340px] sm:w-[500px] sm:h-[500px] md:w-[750px] md:h-[750px] lg:w-[850px] lg:h-[850px] mx-auto">
+                    <div class="absolute inset-0 z-10 p-2" style="
+                        filter: drop-shadow(0 0 50px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 20px rgba(236, 72, 153, 0.1));
+                    ">
+                        <div class="w-full h-full relative" style="
+                            clip-path: polygon(50% 100%, 0 45%, 0 20%, 20% 0, 50% 15%, 80% 0, 100% 20%, 100% 45%);
+                        ">
+                            <svg width="0" height="0" class="absolute">
+                                <defs>
+                                    <clipPath id="heart-clip" clipPathUnits="objectBoundingBox">
+                                        <path
+                                            d="M0.5,0.95 C0.5,0.95 0,0.55 0,0.25 C0,0.1 0.15,0 0.3,0 C0.4,0 0.45,0.05 0.5,0.15 C0.55,0.05 0.6,0 0.7,0 C0.85,0 1,0.1 1,0.25 C1,0.55 0.5,0.95 0.5,0.95 Z">
+                                        </path>
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                            <div id="map" class="w-full h-full border-2 border-brand-border z-0 bg-brand-pink-soft"
+                                style="clip-path: url(#heart-clip); filter: grayscale(0.5);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join CTA Section (Pink Luxury) -->
+    <section id="join" class="w-full py-32 px-6 bg-white relative overflow-hidden">
+        <div
+            class="max-w-6xl mx-auto glass rounded-luxury p-20 md:p-32 text-center border border-brand-border relative overflow-hidden group shadow-2xl">
+            <div
+                class="absolute inset-0 bg-brand-pink opacity-5 group-hover:opacity-10 transition-opacity duration-1000">
+            </div>
+            <h2
+                class="text-4xl md:text-7xl font-black mb-10 text-text-main uppercase tracking-tighter leading-none relative z-10">
+                Commission Your <span class="text-brand-pink/20">Practice.</span></h2>
+            <p
+                class="text-brand-gray font-black text-[11px] uppercase tracking-[0.5em] mb-16 max-w-2xl mx-auto leading-loose relative z-10">
+                TAKE COMMAND OF YOUR ARTISTRY. JOIN THE ELITE COLLECTIVE EMPOWERING BEAUTY ARCHITECTS WORLDWIDE.
+            </p>
+            <button
+                class="bg-brand-pink text-white px-16 py-6 rounded-luxury font-black text-[11px] uppercase tracking-[0.5em] hover:bg-brand-pink/90 transition-all shadow-2xl hover:-translate-y-2 transform relative overflow-hidden group pink-glow">
+                <span class="relative z-10">Initialize Architecture</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer (Pink Luxury) -->
+    <footer class="w-full bg-white text-text-main py-24 px-6 border-t border-brand-border">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20 mb-20 border-b border-brand-border pb-20">
+            <div class="col-span-1 md:col-span-2">
+                <h2 class="text-4xl font-black text-brand-pink uppercase tracking-[0.4em] mb-10">Pink <span
+                        class="text-brand-pink/20">Pixies.</span></h2>
+                <p class="text-brand-gray text-[10px] font-black uppercase tracking-[0.4em] max-w-sm leading-loose">
+                    Empowering beauty architects and providing clients with unparalleled artistic choice and
+                    quality.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-[11px] font-black uppercase tracking-[0.5em] mb-10 text-brand-pink">Collective
+                </h3>
+                <ul class="space-y-6 text-[10px] font-black uppercase tracking-[0.3em]">
+                    <li><a href="#" class="hover:text-brand-pink transition-colors">Find an Architect</a></li>
+                    <li><a href="#" class="hover:text-brand-pink transition-colors">Process Matrix</a></li>
+                    <li><a href="#" class="hover:text-brand-pink transition-colors">Client Audit</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-[11px] font-black uppercase tracking-[0.5em] mb-10 text-brand-pink">Engineers</h3>
+                <ul class="space-y-6 text-[10px] font-black uppercase tracking-[0.3em]">
+                    <li><a href="#" class="hover:text-brand-pink transition-colors">Initialize Identity</a>
+                    </li>
+                    <li><a href="#" class="hover:text-brand-pink transition-colors">Asset Management</a></li>
+                    <li><a href="#" class="hover:text-brand-pink transition-colors">Practice Valuation</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-brand-gray/40 text-[9px] font-black uppercase tracking-[0.5em]">
+            &copy; 2026 Pink Pixies. Precision in Artistry.
+        </div>
+    </footer>
+
+
+    <!-- Supabase Setup -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseConfig.js"></script>
+    <script>
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = supabaseClient;
+        console.log("Supabase connected successfully!");
+    </script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Native JavaScript directly on page instead of import to avoid modules error locally -->
+    <script src="social-feed.js"></script>
+    <script src="maps.js"></script>
+    <script src="pricing.js"></script>
+    <script src="portal.js"></script>
+    <script src="scheduling.js"></script>
+    <script src="payment_logic.js"></script>
+    <script src="notifications.js"></script>
+    <script src="admin.js"></script>
+    <script src="main.js"></script>
+
+    <script>
+        // Splash Screen & PWA
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                document.body.style.overflow = 'auto';
+            }, 2500);
+
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered', reg))
+                    .catch(err => console.log('SW Failed', err));
+            }
+        });
+    </script>
+</body>
+
+</html>
