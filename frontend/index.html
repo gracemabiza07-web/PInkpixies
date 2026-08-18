@@ -71,6 +71,47 @@
             color: #1F2937;
             background-color: #ffffff;
             letter-spacing: -0.01em;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Blur Background Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(190, 24, 93, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.06) 0%, transparent 50%);
+            filter: blur(80px);
+            animation: blobShiftWeb 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes blobShiftWeb {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+            50% {
+                transform: translate(-30px, 60px) scale(0.95);
+            }
+            75% {
+                transform: translate(60px, 30px) scale(1.05);
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #1F2937;
+            background-color: #ffffff;
+            letter-spacing: -0.01em;
         }
 
         h1,
@@ -104,18 +145,41 @@
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(236, 72, 153, 0.1);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(236, 72, 153, 0.15);
+            box-shadow: 
+                0 20px 40px -10px rgba(0, 0, 0, 0.08),
+                0 0 1px rgba(255, 255, 255, 0.5) inset;
+            transition: all 0.4s ease;
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(35px);
+            box-shadow: 
+                0 25px 50px -10px rgba(0, 0, 0, 0.1),
+                0 0 1px rgba(255, 255, 255, 0.6) inset;
         }
 
         .glass-dark {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(236, 72, 153, 0.1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(236, 72, 153, 0.15);
+            box-shadow: 
+                0 20px 40px -10px rgba(0, 0, 0, 0.08),
+                0 0 1px rgba(255, 255, 255, 0.5) inset;
+            transition: all 0.4s ease;
+        }
+
+        .glass-dark:hover {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(35px);
+            box-shadow: 
+                0 25px 50px -10px rgba(0, 0, 0, 0.1),
+                0 0 1px rgba(255, 255, 255, 0.6) inset;
         }
 
         .text-glow {
@@ -146,14 +210,22 @@
 
         .pro-card {
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            background: #ffffff;
-            border: 1px solid #F3F4F6;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(243, 244, 246, 0.8);
+            border-radius: 12px;
         }
 
         .pro-card:hover {
             transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.85);
             border-color: #FCE7F3;
-            box-shadow: 0 20px 40px -15px rgba(236, 72, 153, 0.15);
+            box-shadow: 
+                0 20px 40px -15px rgba(236, 72, 153, 0.2),
+                0 0 1px rgba(255, 255, 255, 0.5) inset;
+            backdrop-filter: blur(25px);
+        }
         }
 
         /* Navbar link hover */
@@ -205,12 +277,42 @@
         #splash-screen {
             position: fixed;
             inset: 0;
-            background: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
             z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+            transition: all 0.8s ease-out;
+        }
+
+        #splash-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 70% 70%, rgba(190, 24, 93, 0.08) 0%, transparent 40%);
+            filter: blur(50px);
+            animation: blobShiftSplash 12s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes blobShiftSplash {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(30px, -40px);
+            }
+            50% {
+                transform: translate(-25px, 35px);
+            }
+            75% {
+                transform: translate(35px, 25px);
+            }
         }
 
         .intro-logo {
@@ -225,6 +327,8 @@
             opacity: 0;
             transform: translateY(20px);
             animation: fadeInReveal 1.5s forwards ease-out 0.2s;
+            position: relative;
+            z-index: 2;
         }
 
         .intro-subtitle {
@@ -235,6 +339,24 @@
             margin-top: 2rem;
             opacity: 0;
             animation: fadeInReveal 1.5s forwards ease-out 0.8s;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(236, 72, 153, 0.1);
+        }
+
+        .heart-loader {
+            position: relative;
+            z-index: 2;
+        }
+
+        .loading-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .percentage {
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes fadeInReveal {
@@ -1644,7 +1766,7 @@
     <script src="main.js"></script>
 
     <script>
-        // 3D Heart Splash Screen Animation
+        // 3D Heart Splash Screen Animation with Blur Transition
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             const loadingBar = document.getElementById('loadingBar');
@@ -1674,10 +1796,11 @@
                 if (progress < 100) {
                     requestAnimationFrame(updateProgress);
                 } else {
-                    // Complete! Hide splash screen
+                    // Complete! Hide splash screen with blur fade transition
                     setTimeout(() => {
                         splash.style.opacity = '0';
                         splash.style.visibility = 'hidden';
+                        splash.style.filter = 'blur(10px)';
                         document.body.style.overflow = 'auto';
                     }, 300);
                 }
