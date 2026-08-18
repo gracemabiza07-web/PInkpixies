@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pink Pixies - Loading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+        }
+
+        .splash-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .heart-loader {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 40px;
+        }
+
+        .heart-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 10px 30px rgba(236, 72, 153, 0.3));
+        }
+
+        .heart-fill {
+            transition: fill 0.3s ease;
+            fill: url(#heartGradient);
+        }
+
+        .heart-outline {
+            fill: none;
+            stroke: #EC4899;
+            stroke-width: 2;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #EC4899;
+            margin-top: 30px;
+            letter-spacing: 2px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .percentage {
+            font-size: 28px;
+            font-weight: 600;
+            color: #EC4899;
+            margin-top: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .brand-text {
+            position: absolute;
+            bottom: 40px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #EC4899;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <div class="heart-loader">
+            <svg class="heart-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#EC4899;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#BE185D;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3" />
+                    </filter>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- 3D Heart Shape -->
+                <!-- Back shadow for 3D effect -->
+                <path d="M50,85 C25,70 10,55 10,40 C10,28 18,18 28,18 C35,18 42,22 50,30 C58,22 65,18 72,18 C82,18 90,28 90,40 C90,55 75,70 50,85 Z" 
+                      fill="#9F1D5C" opacity="0.4" transform="translate(2, 3)"/>
+
+                <!-- Main heart fill (will be clipped for progress) -->
+                <clipPath id="heartClip">
+                    <path d="M50,85 C25,70 10,55 10,40 C10,28 18,18 28,18 C35,18 42,22 50,30 C58,22 65,18 72,18 C82,18 90,28 90,40 C90,55 75,70 50,85 Z"/>
+                </clipPath>
+
+                <!-- Animated fill rectangle (loading progress) -->
+                <rect id="loadingBar" x="10" y="30" width="80" height="55" 
+                      fill="url(#heartGradient)" clip-path="url(#heartClip)" />
+
+                <!-- Heart outline for definition -->
+                <path d="M50,85 C25,70 10,55 10,40 C10,28 18,18 28,18 C35,18 42,22 50,30 C58,22 65,18 72,18 C82,18 90,28 90,40 C90,55 75,70 50,85 Z" 
+                      class="heart-outline" filter="url(#glow)"/>
+            </svg>
+        </div>
+
+        <div class="loading-text">LOADING</div>
+        <div class="percentage" id="percentage">0%</div>
+    </div>
+
+    <div class="brand-text">Pink Pixies</div>
+
+    <script>
+        let currentProgress = 0;
+        const targetProgress = 100;
+        const duration = 3000; // 3 seconds to simulate loading
+        const startTime = Date.now();
+
+        function updateProgress() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min((elapsed / duration) * 100, 100);
+            
+            currentProgress = progress;
+            
+            // Update percentage text
+            document.getElementById('percentage').textContent = Math.floor(progress) + '%';
+            
+            // Update heart fill using clip-path animation
+            const loadingBar = document.getElementById('loadingBar');
+            const fillHeight = 55 * (progress / 100);
+            const yPosition = 85 - fillHeight;
+            
+            loadingBar.setAttribute('y', yPosition);
+            loadingBar.setAttribute('height', fillHeight);
+            
+            if (progress < 100) {
+                requestAnimationFrame(updateProgress);
+            } else {
+                // Complete! Redirect to login after a brief pause
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+            }
+        }
+
+        // Start the animation
+        updateProgress();
+    </script>
+</body>
+</html>
