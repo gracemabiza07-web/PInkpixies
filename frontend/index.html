@@ -253,16 +253,103 @@
 
 <body class="bg-white min-h-screen flex flex-col items-center overflow-x-hidden w-full text-text-main">
 
-    <!-- Splash Screen -->
+    <!-- Authentication Check -->
+    <script src="auth-check.js"></script>
+
+    <!-- Splash Screen with 3D Heart Animation -->
     <div id="splash-screen">
         <div class="intro-logo">Pink Pixies</div>
         <div class="intro-subtitle">Empowering Beauty</div>
-        <div class="mt-8 w-12 h-[px] bg-white/10 relative overflow-hidden">
-            <div class="absolute inset-0 bg-white animate-[loading_2s_ease-in-out_infinite]"></div>
+        
+        <!-- 3D Heart Loader -->
+        <div class="heart-loader mt-12">
+            <svg class="heart-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#EC4899;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#BE185D;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3" />
+                    </filter>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- 3D Heart Shape -->
+                <!-- Back shadow for 3D effect -->
+                <path d="M50,85 C25,70 10,55 10,40 C10,28 18,18 28,18 C35,18 42,22 50,30 C58,22 65,18 72,18 C82,18 90,28 90,40 C90,55 75,70 50,85 Z" 
+                      fill="#9F1D5C" opacity="0.4" transform="translate(2, 3)"/>
+
+                <!-- Main heart fill (will be clipped for progress) -->
+                <clipPath id="heartClip">
+                    <path d="M50,85 C25,70 10,55 10,40 C10,28 18,18 28,18 C35,18 42,22 50,30 C58,22 65,18 72,18 C82,18 90,28 90,40 C90,55 75,70 50,85 Z"/>
+                </clipPath>
+
+                <!-- Animated fill rectangle (loading progress) -->
+                <rect id="loadingBar" x="10" y="30" width="80" height="55" 
+                      fill="url(#heartGradient)" clip-path="url(#heartClip)" />
+
+                <!-- Heart outline for definition -->
+                <path d="M50,85 C25,70 10,55 10,40 C10,28 18,18 28,18 C35,18 42,22 50,30 C58,22 65,18 72,18 C82,18 90,28 90,40 C90,55 75,70 50,85 Z" 
+                      class="heart-outline" filter="url(#glow)"/>
+            </svg>
         </div>
+
+        <div class="loading-text" id="loadingText">LOADING</div>
+        <div class="percentage" id="percentage">0%</div>
     </div>
 
     <style>
+        .heart-loader {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+        }
+
+        .heart-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 10px 30px rgba(236, 72, 153, 0.2));
+        }
+
+        .heart-outline {
+            fill: none;
+            stroke: #EC4899;
+            stroke-width: 2;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #EC4899;
+            margin-top: 30px;
+            letter-spacing: 2px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .percentage {
+            font-size: 22px;
+            font-weight: 600;
+            color: #EC4899;
+            margin-top: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
         @keyframes loading {
             0% {
                 transform: translateX(-100%);
@@ -1557,14 +1644,47 @@
     <script src="main.js"></script>
 
     <script>
-        // Splash Screen & PWA
+        // 3D Heart Splash Screen Animation
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
-            setTimeout(() => {
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                document.body.style.overflow = 'auto';
-            }, 2500);
+            const loadingBar = document.getElementById('loadingBar');
+            const percentageText = document.getElementById('percentage');
+            
+            let currentProgress = 0;
+            const targetProgress = 100;
+            const duration = 3000; // 3 seconds loading animation
+            const startTime = Date.now();
+
+            function updateProgress() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / duration) * 100, 100);
+                
+                currentProgress = progress;
+                
+                // Update percentage text
+                percentageText.textContent = Math.floor(progress) + '%';
+                
+                // Update heart fill using clip-path animation (fills from bottom to top)
+                const fillHeight = 55 * (progress / 100);
+                const yPosition = 85 - fillHeight;
+                
+                loadingBar.setAttribute('y', yPosition);
+                loadingBar.setAttribute('height', fillHeight);
+                
+                if (progress < 100) {
+                    requestAnimationFrame(updateProgress);
+                } else {
+                    // Complete! Hide splash screen
+                    setTimeout(() => {
+                        splash.style.opacity = '0';
+                        splash.style.visibility = 'hidden';
+                        document.body.style.overflow = 'auto';
+                    }, 300);
+                }
+            }
+
+            // Start the animation
+            updateProgress();
 
             // Register Service Worker
             if ('serviceWorker' in navigator) {

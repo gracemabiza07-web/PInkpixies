@@ -1,14 +1,15 @@
-// Authentication check - redirect to splash if not logged in
+// Authentication check - redirect to index if not logged in
 (function() {
     const currentUser = localStorage.getItem('currentUser');
     const hasVisitedBefore = sessionStorage.getItem('loadingScreenShown');
     
     // If no user is logged in
     if (!currentUser) {
-        // Show splash screen only once per session
+        // Show loading screen only once per session
         if (!hasVisitedBefore) {
             sessionStorage.setItem('loadingScreenShown', 'true');
-            window.location.href = 'splash.html';
+            // Keep user on index.html (splash screen will show with 3D heart animation)
+            return;
         } else {
             // If user closes splash, redirect to login
             window.location.href = 'login.html';
@@ -20,7 +21,7 @@
 function logout() {
     localStorage.removeItem('currentUser');
     sessionStorage.removeItem('loadingScreenShown');
-    window.location.href = 'splash.html';
+    window.location.href = 'index.html';
 }
 
 // Display current user info in header (if needed)
